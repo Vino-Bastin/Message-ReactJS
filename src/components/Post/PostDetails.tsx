@@ -1,5 +1,4 @@
 import { useParams } from "react-router-dom";
-import NewComment from "./NewComment";
 import Post from "./Post";
 import Comments from "./Comments";
 import { useSelector } from "react-redux";
@@ -9,36 +8,17 @@ import {
 } from "../../store/features/postSlice";
 import { EntityId } from "@reduxjs/toolkit";
 import { Post as PostInterface } from "../../types";
-import { useNewCommentMutation } from "../../store/features/commentSlice";
 
 const PostDetails = () => {
   const { id } = useParams();
 
   const post = useSelector((state) => selectPostById(state, id as EntityId));
 
-  const [newComment, {}] = useNewCommentMutation();
-
-  const onNewComment = (comment: string) => {
-    newComment({
-      messageId: id as string,
-      payload: {
-        comment,
-      },
-    });
-  };
-
   if (post) {
     return (
       <div className="m-2 mb-4 flex flex-col">
         <Post post={post}></Post>
-        <div className=" pl-16">
-          <NewComment
-            placeHolder="Add a Comment"
-            autoFocus={true}
-            onNewComment={onNewComment}
-          />
-          <Comments id={id as string} />
-        </div>
+        <Comments id={id as string} />
       </div>
     );
   } else {
@@ -59,10 +39,7 @@ const GetPostDetails: React.FC<{ id: string }> = ({ id }) => {
     content = (
       <div className="m-2 mb-4 flex flex-col">
         <Post post={data.entities[data.ids[0]] as PostInterface} />
-        <div className=" pl-16">
-          <NewComment placeHolder="Add a Comment" autoFocus={true} />
-          <Comments id={id as string} />
-        </div>
+        <Comments id={id as string} />
       </div>
     );
   }
