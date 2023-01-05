@@ -1,5 +1,10 @@
 import { createEntityAdapter } from "@reduxjs/toolkit";
-import { CommentResponse, Comments } from "../../types";
+import {
+  CommentResponse,
+  Comments,
+  NewComment,
+  NewReplyComment,
+} from "../../types";
 import baseApi from "../apiSlice";
 import { transformErrorResponse } from "../helper";
 
@@ -17,9 +22,7 @@ const commentApi = baseApi.injectEndpoints({
       transformResponse: (response: CommentResponse, meta, arg) => {
         return commentAdapter.setAll(initialState, response.data);
       },
-
       transformErrorResponse: transformErrorResponse,
-
       providesTags: (result, error, arg) =>
         result
           ? [
@@ -28,7 +31,31 @@ const commentApi = baseApi.injectEndpoints({
             ]
           : ["Comment"],
     }),
+
+    newComment: builder.mutation({
+      query: (arg: NewComment) => ({
+        url: `/message/${arg.messageId}/comment`,
+        method: "POST",
+        body: arg.payload,
+      }),
+      transformErrorResponse: transformErrorResponse,
+      invalidatesTags: (result, error, arg) => ["Comment"],
+    }),
+
+    newReplyComment: builder.mutation({
+      query: (arg: NewReplyComment) => ({
+        url: `/message/${arg.messageId}/reply`,
+        method: "POST",
+        body: arg.payload,
+      }),
+      transformErrorResponse: transformErrorResponse,
+      invalidatesTags: (result, error, arg) => ["Comment"],
+    }),
   }),
 });
 
-export const { useGetCommentsQuery } = commentApi;
+export const {
+  useGetCommentsQuery,
+  useNewCommentMutation,
+  useNewReplyCommentMutation,
+} = commentApi;

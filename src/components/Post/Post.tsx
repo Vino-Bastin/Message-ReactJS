@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import UserProfilePhoto from "./UserProfilePhoto";
 import Reactions from "./Reactions";
 import PostUserName from "./PostUserName";
@@ -7,14 +7,14 @@ import { Post as PostInterface } from "../../types";
 
 interface PostComponentInterface {
   post: PostInterface;
-  children?: ReactNode;
 }
 
-const Post: React.FC<PostComponentInterface> = ({ post, children }) => {
+const Post: React.FC<PostComponentInterface> = ({ post }) => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const navigateToPostDetails = (id: string): void => {
-    if (!children) navigate(`/post/${id}`);
+    if (location.pathname !== `/post/${id}`) navigate(`/post/${id}`);
   };
 
   return (
@@ -49,7 +49,6 @@ const Post: React.FC<PostComponentInterface> = ({ post, children }) => {
               </div>
             </div>
           </div>
-          {children && children}
         </div>
       </div>
     </>

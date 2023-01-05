@@ -38,6 +38,7 @@ const prepareHeaders = (
 //* base query with authToken
 const baseQuery = fetchBaseQuery({
   baseUrl: "http://localhost:5000",
+  credentials: "include",
   prepareHeaders: (headers, api) => {
     prepareHeaders(headers, api);
   },
@@ -46,6 +47,7 @@ const baseQuery = fetchBaseQuery({
 //* refresh token with refresh query endpoint
 const refreshQuery = fetchBaseQuery({
   baseUrl: "http://localhost:5000/",
+  credentials: "include",
   prepareHeaders: (headers, api) => {
     prepareHeaders(headers, api, "refreshToken");
   },

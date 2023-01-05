@@ -30,3 +30,18 @@ export interface CommentResponse {
   status: string;
   data: Comments[];
 }
+
+export interface NewComment {
+  messageId: string;
+  payload: {
+    comment: string;
+  };
+}
+
+export interface NewReplyComment {
+  messageId: string;
+  payload: {
+    comment: string;
+    originComment: string;
+  };
+}

@@ -2,7 +2,10 @@ import NewComment from "./NewComment";
 import UserProfilePhoto from "./UserProfilePhoto";
 import PostUserName from "./PostUserName";
 import React from "react";
-import { useGetCommentsQuery } from "../../store/features/commentSlice";
+import {
+  useGetCommentsQuery,
+  useNewReplyCommentMutation,
+} from "../../store/features/commentSlice";
 import { Comments as CommentsInterface } from "../../types";
 
 const Comments: React.FC<{ id: string }> = ({ id }) => {
@@ -13,6 +16,20 @@ const Comments: React.FC<{ id: string }> = ({ id }) => {
     isSuccess,
     isLoading,
   } = useGetCommentsQuery(id);
+
+  const [newReply] = useNewReplyCommentMutation();
+
+  const onNewReplyComment = (comment: string, originComment?: string) => {
+    if (!originComment) return;
+
+    newReply({
+      messageId: id,
+      payload: {
+        comment,
+        originComment,
+      },
+    });
+  };
 
   if (isLoading) return <div>loading</div>;
 
@@ -69,7 +86,11 @@ const Comments: React.FC<{ id: string }> = ({ id }) => {
                         </div>
                       );
                     })}
-                    <NewComment placeHolder="Your Replies" />
+                    <NewComment
+                      placeHolder="Your Replies"
+                      originComment={comment._id}
+                      onNewComment={onNewReplyComment}
+                    />
                   </>
                 ) : (
                   ""
