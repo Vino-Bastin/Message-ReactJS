@@ -1,4 +1,5 @@
 import { ChangeEvent, useRef, useState } from "react";
+import { SignUpInput } from "../types";
 
 interface errorMessage {
   [Key: string]: string;
@@ -92,6 +93,7 @@ export const useUserInputValidate = (
     input,
     onValidate,
     onChangeHandler,
+    setErrorMessage,
     isValid: isValid.current,
     message: errorMessage,
   };

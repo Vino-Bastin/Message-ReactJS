@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useUserInputValidate } from "../../hooks/useUserInputValidate";
 import Logo from "../NavBar/Logo";
 import UserInput from "./UserInput";
@@ -9,12 +9,50 @@ import {
   validators,
 } from "./SignUp.constants";
 import CloseBtn from "../Utils/CloseBtn";
+import {
+  useIsValidUserNameMutation,
+  useSignUpMutation,
+} from "../../store/features/authSlice";
+import { SignUpInput } from "../../types";
 
 const SignUp = () => {
+  const navigate = useNavigate();
   const [step, setStep] = useState<number>(1);
 
-  const { input, message, onChangeHandler, isValid, onValidate } =
-    useUserInputValidate(initialState, validators);
+  const {
+    setErrorMessage,
+    input,
+    message,
+    onChangeHandler,
+    isValid,
+    onValidate,
+  } = useUserInputValidate(initialState, validators);
+
+  const [isValidUserName] = useIsValidUserNameMutation();
+
+  const [signUp] = useSignUpMutation();
+
+  const nextStepHandler = async () => {
+    if (!onValidate("firstName", "lastName", "userName")) return;
+    try {
+      await isValidUserName(input.userName).unwrap();
+      setStep(2);
+    } catch (e) {
+      setErrorMessage({
+        userName: e as string,
+      });
+    }
+  };
+
+  const signUpHandler = async () => {
+    try {
+      const userDetails = input;
+      await signUp(userDetails).unwrap();
+      navigate("/home");
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   return (
     <div className="login-container bg-slate-50 h-full z-10 absolute top-0 left-0 w-full flex justify-center items-center">
@@ -41,9 +79,7 @@ const SignUp = () => {
         {step === 1 ? (
           <button
             disabled={!isValid}
-            onClick={() => {
-              onValidate("firstName", "lastName", "userName") && setStep(2);
-            }}
+            onClick={nextStepHandler}
             className={`${
               isValid ? " cursor-pointer" : " cursor-no-drop"
             } m-2 p-1 w-72 rounded-2xl bg-black text-white`}
@@ -53,7 +89,7 @@ const SignUp = () => {
         ) : (
           <button
             disabled={!isValid}
-            onClick={() => console.log(input)}
+            onClick={signUpHandler}
             className="m-2 p-1 w-72 rounded-2xl bg-black text-white"
           >
             Sign Up

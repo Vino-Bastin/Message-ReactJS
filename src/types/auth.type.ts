@@ -9,3 +9,11 @@ export interface AuthResponse {
     userName: string;
   };
 }
+
+export interface SignUpInput {
+  firstName: string;
+  lastName: string;
+  userName: string;
+  password: string;
+  confirmPassword: string;
+}

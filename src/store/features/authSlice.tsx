@@ -1,4 +1,5 @@
 import { createSelector, createSlice } from "@reduxjs/toolkit";
+// import { SignUpInput } from "../../types";
 import baseApi from "../apiSlice";
 import { transformErrorResponse } from "../helper";
 import { RootState } from "../store";
@@ -82,12 +83,42 @@ const authApi = baseApi.injectEndpoints({
         }
       },
     }),
+
+    isValidUserName: builder.mutation({
+      query: (userName: string) => ({
+        url: "/auth/isvalidusername",
+        method: "POST",
+        body: {
+          userName,
+        },
+      }),
+      transformErrorResponse: transformErrorResponse,
+    }),
+
+    signUp: builder.mutation({
+      query: (arg) => ({
+        url: "/auth/signup",
+        method: "POST",
+        body: arg,
+      }),
+      transformErrorResponse: transformErrorResponse,
+      onQueryStarted: async (arg, { dispatch, queryFulfilled }) => {
+        //* setting auth state after query fulfilled
+        const response = await queryFulfilled;
+        if (response.data) dispatch(setAuhState(response.data));
+      },
+    }),
   }),
 });
 
 export default authApi;
 
-export const { useLoginMutation, useLogoutMutation } = authApi;
+export const {
+  useLoginMutation,
+  useLogoutMutation,
+  useIsValidUserNameMutation,
+  useSignUpMutation,
+} = authApi;
 
 export const authReducer = authSlice.reducer;
 
